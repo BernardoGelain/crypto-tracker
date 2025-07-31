@@ -27,26 +27,26 @@ A modern cryptocurrency tracking application built with Next.js, TypeScript, and
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
 
 ### Installation
 
 1. Clone the repository:
-\`\`\`bash
-git clone <repository-url>
-cd crypto-tracker
-\`\`\`
+   \`\`\`bash
+   git clone <https://github.com/BernardoGelain/crypto-tracker>
+   cd crypto-tracker
+   \`\`\`
 
 2. Install dependencies:
-\`\`\`bash
-npm install
-\`\`\`
+   \`\`\`bash
+   npm install
+   \`\`\`
 
 3. Run the development server:
-\`\`\`bash
-npm run dev
-\`\`\`
+   \`\`\`bash
+   npm run dev
+   \`\`\`
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
@@ -62,18 +62,18 @@ npm run dev
 ## Project Structure
 
 \`\`\`
-├── app/                    # Next.js App Router pages
-│   ├── coin/[id]/         # Dynamic coin detail pages
-│   ├── layout.tsx         # Root layout
-│   └── page.tsx           # Home page
-├── components/            # React components
-│   ├── ui/               # shadcn/ui components
-│   ├── coin-details.tsx  # Coin detail component
-│   ├── coin-list.tsx     # Coin list component
-│   ├── price-chart.tsx   # Chart component
-│   └── search-bar.tsx    # Search component
-├── __tests__/            # Unit tests
-├── Dockerfile            # Docker configuration
+├── app/ # Next.js App Router pages
+│ ├── coin/[id]/ # Dynamic coin detail pages
+│ ├── layout.tsx # Root layout
+│ └── page.tsx # Home page
+├── components/ # React components
+│ ├── ui/ # shadcn/ui components
+│ ├── coin-details.tsx # Coin detail component
+│ ├── coin-list.tsx # Coin list component
+│ ├── price-chart.tsx # Chart component
+│ └── search-bar.tsx # Search component
+├── **tests**/ # Unit tests
+├── Dockerfile # Docker configuration
 └── README.md
 \`\`\`
 
@@ -91,10 +91,13 @@ This application uses the [CoinGecko API](https://www.coingecko.com/api/document
 The project includes comprehensive unit tests:
 
 \`\`\`bash
+
 # Run all tests
+
 npm run test
 
 # Run tests in watch mode
+
 npm run test:watch
 \`\`\`
 
@@ -103,34 +106,34 @@ npm run test:watch
 Build and run with Docker:
 
 \`\`\`bash
+
 # Build the image
+
 docker build -t crypto-tracker .
 
 # Run the container
+
 docker run -p 3000:3000 crypto-tracker
 \`\`\`
-
-## Deployment on Vercel
-
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Deploy automatically with each push
 
 ## Features in Detail
 
 ### Cryptocurrency List
+
 - Displays top 20 cryptocurrencies by market cap
 - Shows current price, 24h change, and market cap
 - Color-coded price changes (green for positive, red for negative)
 - Click any coin to view detailed information
 
 ### Search Functionality
+
 - Real-time search as you type
 - Debounced API calls for performance
 - Click search results to navigate to coin details
 - Clear search functionality
 
 ### Coin Details Page
+
 - Comprehensive coin information
 - Interactive 7-day price chart
 - Market statistics (market cap, volume, supply)
@@ -138,6 +141,7 @@ docker run -p 3000:3000 crypto-tracker
 - Links to official websites
 
 ### Theme Support
+
 - System theme detection
 - Manual dark/light mode toggle
 - Persistent theme preference
