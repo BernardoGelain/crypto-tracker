@@ -1,7 +1,7 @@
-import { Suspense } from "react"
-import CoinList from "@/components/coin-list"
-import SearchBar from "@/components/search-bar"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { Suspense } from "react";
+import CoinList from "@/components/coin-list/coin-list";
+import SearchBar from "@/components/search-bar/search-bar";
+import { ThemeToggle } from "@/components/theme-togle/theme-toggle";
 
 export default function Home() {
   return (
@@ -30,5 +30,5 @@ export default function Home() {
         </div>
       </main>
     </div>
-  )
+  );
 }

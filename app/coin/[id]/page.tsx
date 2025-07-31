@@ -1,14 +1,14 @@
-import { Suspense } from "react"
-import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import CoinDetails from "@/components/coin-details"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { Suspense } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import CoinDetails from "@/components/coin-details/coin-details";
+import { ThemeToggle } from "@/components/theme-togle/theme-toggle";
 
 interface PageProps {
   params: {
-    id: string
-  }
+    id: string;
+  };
 }
 
 export default function CoinPage({ params }: PageProps) {
@@ -39,5 +39,5 @@ export default function CoinPage({ params }: PageProps) {
         </Suspense>
       </main>
     </div>
-  )
+  );
 }

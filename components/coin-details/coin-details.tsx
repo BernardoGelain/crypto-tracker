@@ -1,82 +1,21 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Image from "next/image"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Skeleton } from "@/components/ui/skeleton"
-import { TrendingUp, TrendingDown, Globe } from "lucide-react"
-import PriceChart from "./price-chart"
-
-interface CoinDetail {
-  id: string
-  symbol: string
-  name: string
-  image: {
-    large: string
-  }
-  market_cap_rank: number
-  market_data: {
-    current_price: {
-      usd: number
-    }
-    market_cap: {
-      usd: number
-    }
-    total_volume: {
-      usd: number
-    }
-    price_change_percentage_24h: number
-    price_change_percentage_7d: number
-    price_change_percentage_30d: number
-    circulating_supply: number
-    total_supply: number
-    max_supply: number
-  }
-  description: {
-    en: string
-  }
-  links: {
-    homepage: string[]
-    blockchain_site: string[]
-  }
-}
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
+import { TrendingUp, TrendingDown, Globe } from "lucide-react";
+import PriceChart from "../price-chart/price-chart";
+import { useCoinDetails } from "./hooks/api/useCoinDetails";
 
 interface CoinDetailsProps {
-  coinId: string
+  coinId: string;
 }
 
 export default function CoinDetails({ coinId }: CoinDetailsProps) {
-  const [coin, setCoin] = useState<CoinDetail | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const fetchCoinDetails = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-
-        const response = await fetch(
-          `https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false`,
-        )
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch coin details")
-        }
-
-        const data = await response.json()
-        setCoin(data)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred")
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchCoinDetails()
-  }, [coinId])
+  const { data: coin, isLoading: loading, error } = useCoinDetails(coinId);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -84,19 +23,19 @@ export default function CoinDetails({ coinId }: CoinDetailsProps) {
       currency: "USD",
       minimumFractionDigits: 2,
       maximumFractionDigits: 6,
-    }).format(price)
-  }
+    }).format(price);
+  };
 
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat("en-US", {
       notation: "compact",
       maximumFractionDigits: 2,
-    }).format(num)
-  }
+    }).format(num);
+  };
 
   const formatSupply = (supply: number) => {
-    return new Intl.NumberFormat("en-US").format(supply)
-  }
+    return new Intl.NumberFormat("en-US").format(supply);
+  };
 
   if (loading) {
     return (
@@ -131,20 +70,20 @@ export default function CoinDetails({ coinId }: CoinDetailsProps) {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (error || !coin) {
     return (
       <Alert variant="destructive">
-        <AlertDescription>{error || "Coin not found"}. Please try again later.</AlertDescription>
+        <AlertDescription>{error?.message || "Coin not found"}. Please try again later.</AlertDescription>
       </Alert>
-    )
+    );
   }
 
   const priceChangeColor = (change: number) => {
-    return change >= 0 ? "text-green-600" : "text-red-600"
-  }
+    return change >= 0 ? "text-green-600" : "text-red-600";
+  };
 
   return (
     <div className="space-y-6">
@@ -153,13 +92,7 @@ export default function CoinDetails({ coinId }: CoinDetailsProps) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <Image
-                src={coin.image.large || "/placeholder.svg"}
-                alt={coin.name}
-                width={64}
-                height={64}
-                className="rounded-full"
-              />
+              <Image src={coin.image.large || "/placeholder.svg"} alt={coin.name} width={64} height={64} className="rounded-full" />
               <div>
                 <h1 className="text-3xl font-bold">{coin.name}</h1>
                 <div className="flex items-center space-x-2">
@@ -170,14 +103,8 @@ export default function CoinDetails({ coinId }: CoinDetailsProps) {
             </div>
             <div className="text-right">
               <div className="text-3xl font-bold">{formatPrice(coin.market_data.current_price.usd)}</div>
-              <div
-                className={`flex items-center justify-end space-x-1 ${priceChangeColor(coin.market_data.price_change_percentage_24h)}`}
-              >
-                {coin.market_data.price_change_percentage_24h >= 0 ? (
-                  <TrendingUp className="h-4 w-4" />
-                ) : (
-                  <TrendingDown className="h-4 w-4" />
-                )}
+              <div className={`flex items-center justify-end space-x-1 ${priceChangeColor(coin.market_data.price_change_percentage_24h)}`}>
+                {coin.market_data.price_change_percentage_24h >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
                 <span className="font-medium">{coin.market_data.price_change_percentage_24h.toFixed(2)}% (24h)</span>
               </div>
             </div>
@@ -220,16 +147,14 @@ export default function CoinDetails({ coinId }: CoinDetailsProps) {
             <div>
               <h3 className="text-sm font-medium text-muted-foreground mb-1">Total Supply</h3>
               <p className="text-lg font-semibold">
-                {coin.market_data.total_supply ? formatSupply(coin.market_data.total_supply) : "N/A"}{" "}
-                {coin.symbol.toUpperCase()}
+                {coin.market_data.total_supply ? formatSupply(coin.market_data.total_supply) : "N/A"} {coin.symbol.toUpperCase()}
               </p>
             </div>
 
             <div>
               <h3 className="text-sm font-medium text-muted-foreground mb-1">Max Supply</h3>
               <p className="text-lg font-semibold">
-                {coin.market_data.max_supply ? formatSupply(coin.market_data.max_supply) : "N/A"}{" "}
-                {coin.symbol.toUpperCase()}
+                {coin.market_data.max_supply ? formatSupply(coin.market_data.max_supply) : "N/A"} {coin.symbol.toUpperCase()}
               </p>
             </div>
 
@@ -280,5 +205,5 @@ export default function CoinDetails({ coinId }: CoinDetailsProps) {
         </Card>
       )}
     </div>
-  )
+  );
 }
