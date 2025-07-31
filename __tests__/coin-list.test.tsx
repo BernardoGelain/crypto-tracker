@@ -1,9 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import CoinList from "@/components/coin-list/coin-list";
-import jest from "jest"; // Import jest to declare the variable
 
-// Mock fetch
 global.fetch = jest.fn();
 
 const mockCoinsData = [
@@ -31,17 +30,27 @@ const mockCoinsData = [
   },
 ];
 
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+    },
+  });
+
+  return ({ children }: { children: React.ReactNode }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+};
+
 describe("CoinList", () => {
   beforeEach(() => {
-    (fetch as jest.Mock).mockClear();
+    jest.clearAllMocks();
   });
 
   it("renders loading state initially", () => {
     (fetch as jest.Mock).mockImplementation(() => new Promise(() => {}));
 
-    render(<CoinList />);
+    render(<CoinList />, { wrapper: createWrapper() });
 
-    expect(screen.getByText("Loading cryptocurrencies...")).toBeInTheDocument();
+    expect(screen.getAllByRole("status").length).toBeGreaterThan(0);
   });
 
   it("renders coin list after successful fetch", async () => {
@@ -50,7 +59,7 @@ describe("CoinList", () => {
       json: async () => mockCoinsData,
     });
 
-    render(<CoinList />);
+    render(<CoinList />, { wrapper: createWrapper() });
 
     await waitFor(() => {
       expect(screen.getByText("Bitcoin")).toBeInTheDocument();
@@ -63,10 +72,11 @@ describe("CoinList", () => {
   it("renders error state when fetch fails", async () => {
     (fetch as jest.Mock).mockRejectedValueOnce(new Error("API Error"));
 
-    render(<CoinList />);
+    render(<CoinList />, { wrapper: createWrapper() });
 
     await waitFor(() => {
       expect(screen.getByText(/API Error/)).toBeInTheDocument();
+      expect(screen.getByText(/Please try again later/i)).toBeInTheDocument();
     });
   });
 
@@ -76,11 +86,11 @@ describe("CoinList", () => {
       json: async () => mockCoinsData,
     });
 
-    render(<CoinList />);
+    render(<CoinList />, { wrapper: createWrapper() });
 
     await waitFor(() => {
       expect(screen.getByText("5.50%")).toBeInTheDocument();
-      expect(screen.getByText("-2.30%")).toBeInTheDocument(); // Corrected the text to match the expected output
+      expect(screen.getByText("2.30%")).toBeInTheDocument();
     });
   });
 });

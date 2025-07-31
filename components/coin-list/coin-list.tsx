@@ -35,15 +35,15 @@ export default function CoinList() {
           <Card key={i}>
             <CardContent className="p-6">
               <div className="flex items-center space-x-4">
-                <Skeleton className="h-12 w-12 rounded-full" />
+                <Skeleton role="status" className="h-12 w-12 rounded-full" />
                 <div className="space-y-2">
-                  <Skeleton className="h-4 w-[100px]" />
-                  <Skeleton className="h-4 w-[60px]" />
+                  <Skeleton role="status" className="h-4 w-[100px]" />
+                  <Skeleton role="status" className="h-4 w-[60px]" />
                 </div>
               </div>
               <div className="mt-4 space-y-2">
-                <Skeleton className="h-4 w-[80px]" />
-                <Skeleton className="h-4 w-[120px]" />
+                <Skeleton role="status" className="h-4 w-[80px]" />
+                <Skeleton role="status" className="h-4 w-[120px]" />
               </div>
             </CardContent>
           </Card>

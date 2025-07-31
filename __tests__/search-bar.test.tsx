@@ -1,17 +1,17 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import "@testing-library/jest-dom";
 import { useRouter } from "next/navigation";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import SearchBar from "@/components/search-bar/search-bar";
-import jest from "jest"; // Import jest to fix the undeclared variable error
 
-// Mock Next.js router
+// Mock next/navigation
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
 }));
 
-// Mock fetch
+// Mock global fetch
 global.fetch = jest.fn();
 
+const mockPush = jest.fn();
 const mockSearchResults = {
   coins: [
     {
@@ -31,20 +31,27 @@ const mockSearchResults = {
   ],
 };
 
-const mockPush = jest.fn();
+// Utilitário para renderizar com React Query Provider
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
+  return ({ children }: { children: React.ReactNode }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+};
 
 describe("SearchBar", () => {
   beforeEach(() => {
-    (useRouter as jest.Mock).mockReturnValue({
-      push: mockPush,
-    });
-    (fetch as jest.Mock).mockClear();
-    mockPush.mockClear();
+    jest.clearAllMocks();
+    (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
   });
 
   it("renders search input", () => {
-    render(<SearchBar />);
-
+    render(<SearchBar />, { wrapper: createWrapper() });
     expect(screen.getByPlaceholderText("Search cryptocurrencies...")).toBeInTheDocument();
   });
 
@@ -54,7 +61,7 @@ describe("SearchBar", () => {
       json: async () => mockSearchResults,
     });
 
-    render(<SearchBar />);
+    render(<SearchBar />, { wrapper: createWrapper() });
 
     const input = screen.getByPlaceholderText("Search cryptocurrencies...");
     fireEvent.change(input, { target: { value: "bitcoin" } });
@@ -71,21 +78,21 @@ describe("SearchBar", () => {
       json: async () => mockSearchResults,
     });
 
-    render(<SearchBar />);
+    render(<SearchBar />, { wrapper: createWrapper() });
 
     const input = screen.getByPlaceholderText("Search cryptocurrencies...");
     fireEvent.change(input, { target: { value: "bitcoin" } });
 
     await waitFor(() => {
-      const bitcoinResult = screen.getByText("Bitcoin");
-      fireEvent.click(bitcoinResult);
+      const result = screen.getByText("Bitcoin");
+      fireEvent.click(result);
     });
 
     expect(mockPush).toHaveBeenCalledWith("/coin/bitcoin");
   });
 
   it("clears search when clear button is clicked", async () => {
-    render(<SearchBar />);
+    render(<SearchBar />, { wrapper: createWrapper() });
 
     const input = screen.getByPlaceholderText("Search cryptocurrencies...") as HTMLInputElement;
     fireEvent.change(input, { target: { value: "bitcoin" } });
