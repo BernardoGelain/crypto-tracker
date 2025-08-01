@@ -102,7 +102,7 @@ export default function CoinDetails({ coinId }: CoinDetailsProps) {
               </div>
             </div>
             <div className="text-right">
-              <div className="text-3xl font-bold">{formatPrice(coin.market_data.current_price.usd)}</div>
+              <div className="text-xl sm:text-3xl font-bold">{formatPrice(coin.market_data.current_price.usd)}</div>
               <div className={`flex items-center justify-end space-x-1 ${priceChangeColor(coin.market_data.price_change_percentage_24h)}`}>
                 {coin.market_data.price_change_percentage_24h >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
                 <span className="font-medium">{coin.market_data.price_change_percentage_24h.toFixed(2)}% (24h)</span>
